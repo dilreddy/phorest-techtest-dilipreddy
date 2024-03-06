@@ -48,3 +48,21 @@ df6 = df4.withColumn("loyalty_points", col("loyalty_points").cast("long"))
 
 df5.printSchema()
 df5.show()
+
+# Write the DataFrame to a table
+df1.write.mode("overwrite").saveAsTable("dmi_mshedw_qa_sandbox.test.appointments")
+df2.write.mode("overwrite").saveAsTable("dmi_mshedw_qa_sandbox.test.clients")
+df5.write.mode("overwrite").saveAsTable("dmi_mshedw_qa_sandbox.test.purchases")
+df6.write.mode("overwrite").saveAsTable("dmi_mshedw_qa_sandbox.test.services")
+
+# COMMAND ----------
+
+df_app = spark.sql('''select count(*) from dmi_mshedw_qa_sandbox.test.appointments''')
+df_app.show()
+df_pur = spark.sql('''select count(*) from dmi_mshedw_qa_sandbox.test.purchases''')
+df_pur.show()
+df_svcs = spark.sql('''select count(*) from dmi_mshedw_qa_sandbox.test.services''')
+df_svcs.show()
+df_clts = spark.sql('''select count(*) from dmi_mshedw_qa_sandbox.test.clients''')
+df_clts.show()
+
