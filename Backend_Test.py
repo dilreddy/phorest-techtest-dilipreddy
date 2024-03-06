@@ -21,7 +21,7 @@ from pyspark.sql.functions import col
 account_url = "https://<storageaccountname>.blob.core.windows.net"
 default_credential = DefaultAzureCredential()
 		
-blob_service_client = BlobServiceClient(account_url="https://dmiprodfastauth.blob.core.windows.net", credential='E+uNA9pN9lwwvaVnl1mMjrCNlkhLR9WboHygXW3Fwl5KZSeSBBicXXeysHX2yTAjS8T5pTAH0Ku++AStZT3BEA==')
+blob_service_client = BlobServiceClient(account_url="https://test.blob.core.windows.net", credential='xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
 # Get a client to interact with a specific container - though it may not yet exist
 container_client = blob_service_client.get_container_client("fastauth")
 
