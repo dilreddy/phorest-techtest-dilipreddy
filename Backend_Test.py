@@ -21,7 +21,7 @@ from pyspark.sql.functions import col
 account_url = "https://<storageaccountname>.blob.core.windows.net"
 default_credential = DefaultAzureCredential()
 		
-blob_service_client = BlobServiceClient(account_url="https://test.blob.core.windows.net", credential='xxxxxxxxxxxxxx')
+blob_service_client = BlobServiceClient(account_url="https://dmiprodfastauth.blob.core.windows.net", credential='E+uNA9pN9lwwvaVnl1mMjrCNlkhLR9WboHygXW3Fwl5KZSeSBBicXXeysHX2yTAjS8T5pTAH0Ku++AStZT3BEA==')
 # Get a client to interact with a specific container - though it may not yet exist
 container_client = blob_service_client.get_container_client("fastauth")
 
@@ -41,6 +41,7 @@ df1 = spark.read.csv(csv_path1, header=True, inferSchema=True)
 df2 = spark.read.csv(csv_path2, header=True, inferSchema=True)
 df3 = spark.read.csv(csv_path3, header=True, inferSchema=True)
 df4 = spark.read.csv(csv_path4, header=True, inferSchema=True)
+
 
 # Convert loyalty_points column to long data type
 df5 = df3.withColumn("loyalty_points", col("loyalty_points").cast("long"))
@@ -66,3 +67,63 @@ df_svcs.show()
 df_clts = spark.sql('''select count(*) from dmi_mshedw_qa_sandbox.test.clients''')
 df_clts.show()
 
+
+# COMMAND ----------
+
+dftest = spark.sql('''with test as (
+select cl.id as clientid,  sum(pur.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
+from dmi_mshedw_qa_sandbox.test.clients cl
+join dmi_mshedw_qa_sandbox.test.appointments app on app.client_id = cl.id
+join dmi_mshedw_qa_sandbox.test.purchases pur on pur.appointment_id = app.id
+where app.start_time >= '2018-01-01 00:00:00 +0000' and cl.banned = 'FALSE'
+and cl.id = 'e0779fa6-7635-4df6-b906-d0d665ce5044'
+group by cl.id,cl.first_name, cl.last_name
+union all
+select cl.id as clientid,  sum(svcs.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
+from dmi_mshedw_qa_sandbox.test.clients cl
+join dmi_mshedw_qa_sandbox.test.appointments app on app.client_id = cl.id
+join dmi_mshedw_qa_sandbox.test.services svcs on svcs.appointment_id = app.id
+where app.start_time >= '2018-01-01 00:00:00 +0000' and  cl.banned = 'FALSE'
+and cl.id = 'e0779fa6-7635-4df6-b906-d0d665ce5044'
+group by cl.id,cl.first_name, cl.last_name)
+
+select clientid,loyalty_points,fname,lname,rnk
+from(
+select clientid,sum(loyalty_points) as loyalty_points,fname,lname, rank() over (order by sum(loyalty_points) desc) as rnk
+from test
+group by clientid,fname,lname)
+where rnk<=50''')
+
+# COMMAND ----------
+
+dftest.show(10)
+
+# COMMAND ----------
+
+dffinal = spark.sql('''with test as (
+select cl.id as clientid,  sum(pur.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
+from dmi_mshedw_qa_sandbox.test.clients cl
+join dmi_mshedw_qa_sandbox.test.appointments app on app.client_id = cl.id
+join dmi_mshedw_qa_sandbox.test.purchases pur on pur.appointment_id = app.id
+where app.start_time >= '2018-01-01 00:00:00 +0000' and cl.banned = 'FALSE'
+--and cl.id = 'e0779fa6-7635-4df6-b906-d0d665ce5044'
+group by cl.id,cl.first_name, cl.last_name
+union all
+select cl.id as clientid,  sum(svcs.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
+from dmi_mshedw_qa_sandbox.test.clients cl
+join dmi_mshedw_qa_sandbox.test.appointments app on app.client_id = cl.id
+join dmi_mshedw_qa_sandbox.test.services svcs on svcs.appointment_id = app.id
+where app.start_time >= '2018-01-01 00:00:00 +0000' and  cl.banned = 'FALSE'
+--and cl.id = 'e0779fa6-7635-4df6-b906-d0d665ce5044'
+group by cl.id,cl.first_name, cl.last_name)
+
+select clientid,loyalty_points,fname,lname,rnk
+from(
+select clientid,sum(loyalty_points) as loyalty_points,fname,lname, rank() over (order by sum(loyalty_points) desc) as rnk
+from test
+group by clientid,fname,lname)
+where rnk<=50''')
+
+# COMMAND ----------
+
+dffinal.show(50)
