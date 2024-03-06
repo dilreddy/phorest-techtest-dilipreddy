@@ -4,7 +4,9 @@ Method 1: Using an ETL tool like informatica, Datastage, SSIS, etc we can load t
 
 Method 2: We can load the files to cloud storage and create a notebook to read the files and write to tables and generate the report.
 
-I followed method 2 , I am also comfortable using method 1.
+I followed method 2 , I am also comfortable using method 1. 
+
+With the actual production data set we can also generate a report how frequently a customer is coming back, is it monthly, quartely , 6 months... and also on avg how much they are spending. Depending on it, a business owner can send some offers on some products to the targeted customers.
 
 
 Step 1: Manually Copied the .csv files to azure blob storage
