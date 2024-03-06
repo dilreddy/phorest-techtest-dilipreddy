@@ -21,7 +21,7 @@ from pyspark.sql.functions import col
 account_url = "https://<storageaccountname>.blob.core.windows.net"
 default_credential = DefaultAzureCredential()
 		
-blob_service_client = BlobServiceClient(account_url="https://test.blob.core.windows.net", credential='xxxxxabcxfegghkkkklllllll')
+blob_service_client = BlobServiceClient(account_url="https://test.blob.core.windows.net", credential='xxxxxxxxxxxxxx')
 # Get a client to interact with a specific container - though it may not yet exist
 container_client = blob_service_client.get_container_client("fastauth")
 
@@ -42,5 +42,9 @@ df2 = spark.read.csv(csv_path2, header=True, inferSchema=True)
 df3 = spark.read.csv(csv_path3, header=True, inferSchema=True)
 df4 = spark.read.csv(csv_path4, header=True, inferSchema=True)
 
-df1.printSchema()
-df1.show()
+# Convert loyalty_points column to long data type
+df5 = df3.withColumn("loyalty_points", col("loyalty_points").cast("long"))
+df6 = df4.withColumn("loyalty_points", col("loyalty_points").cast("long"))
+
+df5.printSchema()
+df5.show()
