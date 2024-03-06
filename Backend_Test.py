@@ -70,6 +70,8 @@ df_clts.show()
 
 # COMMAND ----------
 
+# Test script with single clientid
+
 dftest = spark.sql('''with test as (
 select cl.id as clientid,  sum(pur.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
 from dmi_mshedw_qa_sandbox.test.clients cl
@@ -99,6 +101,8 @@ where rnk<=50''')
 dftest.show(10)
 
 # COMMAND ----------
+
+# Final script to identify the top 50 clients with most loyalty points
 
 dffinal = spark.sql('''with test as (
 select cl.id as clientid,  sum(pur.loyalty_points) loyalty_points,cl.first_name fname, cl.last_name lname
