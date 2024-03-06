@@ -1,0 +1,36 @@
+create or replace table dmi_mshedw_qa_sandbox.test.appointments
+(
+	  id 		  string not null
+    , client_id string not null
+    , start_time timestamp
+    , end_time timestamp
+);
+
+create or replace table dmi_mshedw_qa_sandbox.test.clients
+(
+	id 		  string not null
+   ,first_name string 
+   ,last_name string
+   ,email string
+   ,phone string
+   ,gender string
+   ,banned boolean
+);
+
+create or replace table dmi_mshedw_qa_sandbox.test.purchases
+(
+	id 		  string not null
+    , appointment_id string 
+    ,name string
+    ,price double
+    ,loyalty_points long
+);
+
+create or replace table dmi_mshedw_qa_sandbox.test.services
+(
+	id 		  string not null
+    , appointment_id string 
+    ,name string
+    ,price bigint
+    ,loyalty_points bigint
+);
